@@ -4,16 +4,34 @@ const sqs = new SL_AWS.SQS(AWS);
 const s3 = new AWS.S3();
 exports.handler = function (event, context, callback) {
 
-	sqs.sendMessage({
-		MessageBody: 'hi',
-		QueueUrl: 'https://sqs.us-east-1.amazonaws.com/263248768798/skarolori',
-		DelaySeconds: '0',
-		MessageAttributes: {}
-	}, function (data) {
-		// your logic (logging etc) to handle successful message delivery, should be here
-	}, function (error) {
-		// your logic (logging etc) to handle failures, should be here
-	});
+	s3.listObjects({
+		'Bucket': 'skarolori',
+		'MaxKeys': 10,
+		'Prefix': ''
+	}).promise()
+		.then(data => {
+			console.log(data);           // successful response
+			/*
+			data = {
+			 Contents: [
+				{
+				   ETag: "\\"70ee1738b6b21e2c8a43f3a5ab0eee71\\"",
+				   Key: "example1.jpg",
+				   LastModified: <Date Representation>,
+				   Owner: {
+					  DisplayName: "myname",
+					  ID: "12345example25102679df27bb0ae12b3f85be6f290b936c4393484be31bebcc"
+				   },
+				   Size: 11,
+				   StorageClass: "STANDARD"
+				},
+				{...}
+			*/
+		})
+		.catch(err => {
+			console.log(err, err.stack); // an error occurred
+		});
+
 
 
 
